@@ -15,6 +15,12 @@ LOWFX = [False]
 
 
 def font(size, bold=True):
+    # Tests and some shutdown/restart paths call pygame.quit() and then create
+    # another Game in the same process. Pygame Font objects from the old font
+    # subsystem must not be reused after that native subsystem is restarted.
+    if not pygame.font.get_init():
+        pygame.font.init()
+        _fonts.clear()
     key = (size, bold)
     if key not in _fonts:
         name = "DejaVuSansCondensed-Bold.ttf" if bold else "DejaVuSansCondensed.ttf"
