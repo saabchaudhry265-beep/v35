@@ -38,6 +38,9 @@ class Game(SaveMixin, CombatMixin, AIMixin, AudioMixin, RenderMixin, UI2Mixin, U
     def __init__(self):
         pygame.mixer.pre_init(22050, -16, 1, 512)
         pygame.init()
+        # Pygame font handles become unsafe after pygame.quit(); every new Game
+        # instance starts with a fresh font subsystem and must drop old handles.
+        art.reset_font_cache()
         pygame.display.set_caption("Тропы Эльдории")
         try:
             pygame.display.set_icon(pygame.image.load(str(ASSETS_PATH() / "icon.png")))
