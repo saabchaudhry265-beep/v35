@@ -14,6 +14,11 @@ _discs = {}
 LOWFX = [False]
 
 
+def reset_font_cache():
+    """Discard native font handles after pygame's font subsystem restarts."""
+    _fonts.clear()
+
+
 def font(size, bold=True):
     # Tests and some shutdown/restart paths call pygame.quit() and then create
     # another Game in the same process. Pygame Font objects from the old font
