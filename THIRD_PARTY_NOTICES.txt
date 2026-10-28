@@ -1,0 +1,13 @@
+Сторонние компоненты, входящие в сборку «Тропы Эльдории»
+
+1. Pygame (https://www.pygame.org) — лицензия GNU LGPL 2.1.
+   Исходный код и текст лицензии: https://github.com/pygame/pygame
+2. SDL2 и связанные библиотеки (входят в Pygame) — лицензия zlib.
+3. Python (https://www.python.org) — лицензия PSF.
+4. PyInstaller (только инструмент сборки) — GPL с исключением для собранных программ.
+5. Шрифт DejaVu Sans Condensed — Bitstream Vera Fonts Copyright / изменения DejaVu в общественном достоянии.
+   Полный текст лицензии: assets/fonts/DejaVu-LICENSE.txt
+
+ВАЖНО перед коммерческим выпуском: приложите к релизу полные тексты лицензий Pygame (LGPL 2.1) и Python (PSF),
+убедитесь, что пользователь может заменить библиотеку Pygame (в сборке one-folder она лежит отдельными файлами).
+Это не юридическая консультация.
