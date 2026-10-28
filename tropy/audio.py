@@ -1,7 +1,6 @@
 """Procedural sound effects and music (mixin for Game)."""
 import math
 import random
-import threading
 from array import array
 
 import pygame
@@ -50,19 +49,12 @@ class AudioMixin:
         self.sounds = self.make_sounds()
         self.tracks = {}
         self.track_bytes = {}
+        self.audio_format = None
         self.music_channel = None
         self.track_name = None
         info = pygame.mixer.get_init()
         if info and info[1] == -16:
-            rate, _, channels = info
-
-            def worker():
-                for name in TRACKS:
-                    try:
-                        self.track_bytes[name] = synth_track(name, rate, channels)
-                    except Exception:  # noqa: BLE001
-                        self.track_bytes[name] = b""
-            threading.Thread(target=worker, daemon=True).start()
+            self.audio_format = (info[0], info[2])
 
     def make_sounds(self):
         result = {}
@@ -100,6 +92,15 @@ class AudioMixin:
 
     def build_track(self, name):
         data = self.track_bytes.get(name)
+        if data is None and self.audio_format:
+            # Synthesize on demand instead of spawning one worker per Game.
+            # Tests repeatedly create/quit Pygame instances; background workers
+            # surviving pygame.quit() can race with rendering and destabilize SDL.
+            try:
+                data = synth_track(name, *self.audio_format)
+            except Exception:  # noqa: BLE001
+                data = b""
+            self.track_bytes[name] = data
         if not data:
             return None
         try:
