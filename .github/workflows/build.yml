@@ -18,8 +18,20 @@ jobs:
           python-version: "3.11"
       - name: Install dependencies
         run: python -m pip install -r requirements.txt pyinstaller
+      - name: Diagnose crash-safe loop test in isolation
+        continue-on-error: true
+        run: python -c "import sys,unittest; sys.path.insert(0,'tests'); s=unittest.defaultTestLoader.loadTestsFromName('test_game.FeatureTests.test_cli_and_crash_safe_loop'); r=unittest.TextTestRunner(verbosity=2).run(s); sys.exit(not r.wasSuccessful())"
+        env:
+          SDL_VIDEODRIVER: dummy
+          SDL_AUDIODRIVER: dummy
+      - name: Diagnose screen rendering test in isolation
+        continue-on-error: true
+        run: python -c "import sys,unittest; sys.path.insert(0,'tests'); s=unittest.defaultTestLoader.loadTestsFromName('test_game.FeatureTests.test_remaining_screens_draw'); r=unittest.TextTestRunner(verbosity=2).run(s); sys.exit(not r.wasSuccessful())"
+        env:
+          SDL_VIDEODRIVER: dummy
+          SDL_AUDIODRIVER: dummy
       - name: Tests
-        run: python -m unittest discover -s tests -v
+        run: python -X faulthandler -m unittest discover -s tests -v
         env:
           SDL_VIDEODRIVER: dummy
           SDL_AUDIODRIVER: dummy
