@@ -6,9 +6,11 @@ on:
   workflow_dispatch:
 
 jobs:
-  test:
-    name: Tests and gameplay soak
-    runs-on: ubuntu-latest
+  build:
+    name: Test and build Windows release
+    runs-on: windows-latest
+    permissions:
+      contents: write
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
@@ -26,20 +28,6 @@ jobs:
         env:
           SDL_VIDEODRIVER: dummy
           SDL_AUDIODRIVER: dummy
-
-  build:
-    name: Build Windows release
-    needs: test
-    runs-on: windows-latest
-    permissions:
-      contents: write
-    steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
-        with:
-          python-version: "3.11"
-      - name: Install dependencies
-        run: python -m pip install -r requirements.txt pyinstaller
       - name: Build executable
         run: python -m PyInstaller --noconfirm --clean tropy_eldorii.spec
       - name: Smoke-run the built exe (version flag)
