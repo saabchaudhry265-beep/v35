@@ -1912,6 +1912,14 @@ def ASSETS_PATH():
 def main(argv=None):
     argv = list(sys.argv[1:] if argv is None else argv)
     if "--version" in argv:
+        # Windows consoles may default to cp1252/cp1251 and fail on Cyrillic.
+        # Prefer UTF-8 for this short CLI response, falling back to replacement
+        # characters if the output stream cannot be reconfigured.
+        try:
+            if hasattr(sys.stdout, "reconfigure"):
+                sys.stdout.reconfigure(encoding="utf-8", errors="replace")
+        except (OSError, ValueError):
+            pass
         print("Тропы Эльдории v{}".format(VERSION))
         return 0
     if "--reset-settings" in argv:
